@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+
+<html lang="ku">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zîrek AI — کرد & ئەلمانی</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Sans+Arabic:wght@300;400;600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg: #06080f;
+–surface: #0d1020;
+–surface2: #141728;
+–border: #1e2540;
+–border2: #2a3158;
+–ku-gold: #f0b429;
+–ku-red: #e63946;
+–ku-green: #2ec27e;
+–de-gold: #ffcc00;
+–de-red: #dd0000;
+–text: #e8eaf6;
+–muted: #5a6080;
+–muted2: #8890b0;
+–accent: #f0b429;
+–glow-ku: rgba(240,180,41,0.12);
+–glow-de: rgba(255,204,0,0.1);
+}
+
+html, body { height: 100%; }
+
+body {
+font-family: ‘Outfit’, sans-serif;
+background: var(–bg);
+color: var(–text);
+display: flex;
+flex-direction: column;
+height: 100vh;
+overflow: hidden;
+cursor: default;
+}
+
+/* ANIMATED BACKGROUND */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background:
+radial-gradient(ellipse 70% 50% at 15% 20%, rgba(240,180,41,0.06) 0%, transparent 60%),
+radial-gradient(ellipse 50% 60% at 85% 70%, rgba(46,194,126,0.05) 0%, transparent 60%),
+radial-gradient(ellipse 80% 40% at 50% 90%, rgba(230,57,70,0.04) 0%, transparent 60%);
+pointer-events: none;
+z-index: 0;
+}
+
+/* Subtle grid texture */
+body::after {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image: linear-gradient(rgba(240,180,41,0.02) 1px, transparent 1px),
+linear-gradient(90deg, rgba(240,180,41,0.02) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+/* SETUP SCREEN */
+#setup-screen {
+position: fixed;
+inset: 0;
+z-index: 200;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(6,8,15,0.97);
+backdrop-filter: blur(24px);
+}
+
+.setup-card {
+background: var(–surface);
+border: 1px solid var(–border2);
+border-radius: 24px;
+padding: 44px 40px;
+max-width: 460px;
+width: 92%;
+position: relative;
+overflow: hidden;
+animation: riseIn 0.5s cubic-bezier(.16,1,.3,1);
+}
+
+.setup-card::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 3px;
+background: linear-gradient(90deg, var(–ku-red), var(–ku-gold), var(–ku-green));
+}
+
+@keyframes riseIn {
+from { opacity: 0; transform: translateY(30px) scale(0.97); }
+to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.setup-langs {
+display: flex;
+gap: 10px;
+margin-bottom: 24px;
+}
+
+.lang-badge {
+padding: 4px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 600;
+letter-spacing: 0.06em;
+}
+
+.lang-badge.ku { background: rgba(240,180,41,0.15); color: var(–ku-gold); border: 1px solid rgba(240,180,41,0.3); }
+.lang-badge.de { background: rgba(255,204,0,0.1); color: #e8c80a; border: 1px solid rgba(255,204,0,0.25); }
+
+.setup-card h2 {
+font-family: ‘Cinzel’, serif;
+font-size: 30px;
+font-weight: 900;
+margin-bottom: 6px;
+background: linear-gradient(135deg, var(–ku-gold), #fff, var(–ku-green));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+line-height: 1.2;
+}
+
+.setup-subtitle {
+display: flex;
+flex-direction: column;
+gap: 2px;
+margin-bottom: 28px;
+}
+
+.setup-subtitle span {
+font-size: 14px;
+color: var(–muted2);
+line-height: 1.5;
+}
+
+.setup-subtitle .ku-text {
+font-family: ‘Noto Sans Arabic’, sans-serif;
+font-size: 15px;
+color: rgba(240,180,41,0.7);
+direction: rtl;
+}
+
+.field-label {
+display: block;
+font-size: 11px;
+font-weight: 600;
+letter-spacing: 0.1em;
+color: var(–muted);
+margin-bottom: 8px;
+text-transform: uppercase;
+}
+
+.api-input {
+width: 100%;
+padding: 13px 16px;
+background: var(–bg);
+border: 1px solid var(–border);
+border-radius: 12px;
+color: var(–text);
+font-family: ‘Outfit’, monospace;
+font-size: 13px;
+outline: none;
+transition: border-color 0.2s, box-shadow 0.2s;
+margin-bottom: 16px;
+}
+
+.api-input:focus {
+border-color: var(–ku-gold);
+box-shadow: 0 0 0 3px var(–glow-ku);
+}
+
+.btn-start {
+width: 100%;
+padding: 14px;
+background: linear-gradient(135deg, var(–ku-red) 0%, var(–ku-gold) 50%, var(–ku-green) 100%);
+border: none;
+border-radius: 12px;
+color: #06080f;
+font-size: 15px;
+font-weight: 700;
+cursor: pointer;
+transition: opacity 0.2s, transform 0.15s;
+font-family: ‘Outfit’, sans-serif;
+letter-spacing: 0.03em;
+}
+
+.btn-start:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-start:active { transform: translateY(0); }
+
+.setup-error { color: var(–ku-red); font-size: 13px; text-align: center; margin-top: 10px; min-height: 18px; }
+
+/* HEADER */
+header {
+position: relative;
+z-index: 10;
+display: flex;
+align-items: center;
+gap: 0;
+border-bottom: 1px solid var(–border);
+background: rgba(6,8,15,0.85);
+backdrop-filter: blur(20px);
+overflow: hidden;
+}
+
+.header-flag-stripe {
+display: flex;
+flex-direction: column;
+width: 5px;
+height: 64px;
+flex-shrink: 0;
+}
+.stripe-red { flex: 1; background: var(–ku-red); }
+.stripe-yellow { flex: 1; background: var(–ku-gold); }
+.stripe-green { flex: 1; background: var(–ku-green); }
+
+.header-inner {
+display: flex;
+align-items: center;
+gap: 14px;
+padding: 12px 20px;
+flex: 1;
+}
+
+.logo-sun {
+width: 40px;
+height: 40px;
+position: relative;
+flex-shrink: 0;
+}
+
+.logo-sun svg {
+width: 40px;
+height: 40px;
+filter: drop-shadow(0 0 10px rgba(240,180,41,0.5));
+animation: spinSlow 20s linear infinite;
+}
+
+@keyframes spinSlow {
+from { transform: rotate(0deg); }
+to { transform: rotate(360deg); }
+}
+
+.header-titles { flex: 1; }
+.header-titles h1 {
+font-family: ‘Cinzel’, serif;
+font-size: 19px;
+font-weight: 900;
+background: linear-gradient(90deg, var(–ku-gold), #fff8e7);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+line-height: 1.2;
+}
+
+.header-titles .sub {
+font-size: 11px;
+color: var(–muted);
+letter-spacing: 0.08em;
+}
+
+.header-flags {
+display: flex;
+gap: 4px;
+align-items: center;
+}
+
+.flag { font-size: 20px; line-height: 1; }
+
+.lang-switcher {
+display: flex;
+gap: 6px;
+margin-left: 16px;
+}
+
+.lang-btn {
+padding: 5px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 600;
+cursor: pointer;
+border: 1px solid var(–border2);
+background: transparent;
+color: var(–muted2);
+transition: all 0.2s;
+font-family: ‘Outfit’, sans-serif;
+}
+
+.lang-btn.active-ku { background: rgba(240,180,41,0.15); border-color: var(–ku-gold); color: var(–ku-gold); }
+.lang-btn.active-de { background: rgba(255,204,0,0.12); border-color: #e8c80a; color: #e8c80a; }
+.lang-btn:hover:not(.active-ku):not(.active-de) { border-color: var(–border2); color: var(–text); background: var(–surface2); }
+
+.status-pill {
+display: flex;
+align-items: center;
+gap: 6px;
+padding: 5px 12px;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 20px;
+font-size: 11px;
+color: var(–muted2);
+font-weight: 500;
+}
+
+.status-dot {
+width: 6px; height: 6px;
+background: var(–ku-green);
+border-radius: 50%;
+box-shadow: 0 0 6px var(–ku-green);
+animation: blink 2.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.3; }
+}
+
+/* CHAT AREA */
+#chat-wrap {
+flex: 1;
+overflow-y: auto;
+padding: 28px 0 16px;
+position: relative;
+z-index: 1;
+}
+
+#chat-wrap::-webkit-scrollbar { width: 4px; }
+#chat-wrap::-webkit-scrollbar-track { background: transparent; }
+#chat-wrap::-webkit-scrollbar-thumb { background: var(–border2); border-radius: 2px; }
+
+#messages {
+max-width: 740px;
+margin: 0 auto;
+padding: 0 20px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+}
+
+/* EMPTY STATE */
+.empty-state {
+text-align: center;
+padding: 40px 20px;
+animation: riseIn 0.5s ease;
+}
+
+.empty-sun {
+margin: 0 auto 20px;
+width: 64px;
+height: 64px;
+}
+
+.empty-sun svg {
+width: 64px;
+height: 64px;
+filter: drop-shadow(0 0 20px rgba(240,180,41,0.5));
+animation: spinSlow 15s linear infinite;
+}
+
+.empty-state h2 {
+font-family: ‘Cinzel’, serif;
+font-size: 26px;
+font-weight: 700;
+background: linear-gradient(135deg, var(–ku-gold), #fff, var(–ku-green));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+margin-bottom: 4px;
+}
+
+.empty-ku {
+font-family: ‘Noto Sans Arabic’, sans-serif;
+font-size: 18px;
+color: rgba(240,180,41,0.6);
+direction: rtl;
+margin-bottom: 10px;
+}
+
+.empty-state p { color: var(–muted2); font-size: 14px; line-height: 1.6; max-width: 400px; margin: 0 auto 28px; }
+
+.suggestions {
+display: flex;
+flex-wrap: wrap;
+gap: 8px;
+justify-content: center;
+}
+
+.suggestion-btn {
+padding: 8px 16px;
+background: var(–surface);
+border: 1px solid var(–border2);
+border-radius: 20px;
+color: var(–muted2);
+font-size: 13px;
+cursor: pointer;
+transition: all 0.2s;
+font-family: ‘Outfit’, sans-serif;
+}
+
+.suggestion-btn:hover {
+border-color: var(–ku-gold);
+color: var(–ku-gold);
+background: var(–glow-ku);
+}
+
+/* MESSAGES */
+.msg-row {
+display: flex;
+gap: 12px;
+animation: msgIn 0.3s cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes msgIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-row.user { flex-direction: row-reverse; }
+
+.avatar {
+width: 34px;
+height: 34px;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 15px;
+flex-shrink: 0;
+margin-top: 3px;
+}
+
+.avatar.ai {
+background: linear-gradient(135deg, #1a1408, #2a2010);
+border: 1px solid rgba(240,180,41,0.4);
+box-shadow: 0 0 14px rgba(240,180,41,0.2);
+overflow: hidden;
+}
+
+.avatar.ai svg {
+width: 20px;
+height: 20px;
+filter: drop-shadow(0 0 4px rgba(240,180,41,0.6));
+animation: spinSlow 20s linear infinite;
+}
+
+.avatar.user {
+background: var(–surface2);
+border: 1px solid var(–border2);
+font-size: 18px;
+}
+
+.bubble {
+max-width: 76%;
+padding: 13px 17px;
+border-radius: 18px;
+font-size: 14.5px;
+line-height: 1.7;
+position: relative;
+}
+
+.msg-row.ai .bubble {
+background: var(–surface);
+border: 1px solid var(–border);
+border-top-left-radius: 4px;
+}
+
+.msg-row.user .bubble {
+background: var(–surface2);
+border: 1px solid rgba(240,180,41,0.2);
+border-top-right-radius: 4px;
+}
+
+.bubble-lang-tag {
+display: inline-block;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.08em;
+padding: 1px 7px;
+border-radius: 10px;
+margin-bottom: 6px;
+text-transform: uppercase;
+}
+
+.bubble-lang-tag.ku { background: rgba(240,180,41,0.12); color: var(–ku-gold); }
+.bubble-lang-tag.de { background: rgba(255,204,0,0.1); color: #e8c80a; }
+
+.bubble pre {
+background: #080a12;
+border: 1px solid var(–border2);
+border-radius: 10px;
+padding: 14px;
+overflow-x: auto;
+margin: 10px 0;
+font-family: ‘Outfit’, monospace;
+font-size: 13px;
+line-height: 1.55;
+}
+
+.bubble code {
+font-family: ‘Outfit’, monospace;
+background: rgba(240,180,41,0.08);
+padding: 1px 6px;
+border-radius: 4px;
+font-size: 13px;
+color: var(–ku-gold);
+}
+
+.bubble pre code { background: none; padding: 0; color: #c9d1d9; }
+.bubble strong { color: #fff; font-weight: 600; }
+.bubble em { color: var(–muted2); }
+
+/* RTL Kurdish text */
+.bubble.rtl { direction: rtl; text-align: right; font-family: ‘Noto Sans Arabic’, ‘Outfit’, sans-serif; }
+
+/* TYPING */
+.typing-indicator { display: flex; align-items: center; gap: 5px; padding: 6px 0; }
+.typing-dot {
+width: 7px; height: 7px;
+border-radius: 50%;
+background: var(–ku-gold);
+animation: typingBounce 1.3s ease-in-out infinite;
+opacity: 0.5;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; background: var(–ku-green); }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; background: var(–ku-red); }
+
+@keyframes typingBounce {
+0%, 70%, 100% { transform: translateY(0); opacity: 0.4; }
+35% { transform: translateY(-7px); opacity: 1; }
+}
+
+/* INPUT AREA */
+#input-area {
+position: relative;
+z-index: 10;
+padding: 14px 20px 18px;
+border-top: 1px solid var(–border);
+background: rgba(6,8,15,0.92);
+backdrop-filter: blur(20px);
+}
+
+.input-wrap {
+max-width: 740px;
+margin: 0 auto;
+position: relative;
+}
+
+#user-input {
+width: 100%;
+padding: 14px 58px 14px 18px;
+background: var(–surface);
+border: 1px solid var(–border2);
+border-radius: 16px;
+color: var(–text);
+font-size: 14.5px;
+font-family: ‘Outfit’, sans-serif;
+outline: none;
+resize: none;
+line-height: 1.55;
+max-height: 140px;
+overflow-y: auto;
+transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#user-input:focus {
+border-color: var(–ku-gold);
+box-shadow: 0 0 0 3px var(–glow-ku);
+}
+
+#user-input::placeholder { color: var(–muted); }
+
+#send-btn {
+position: absolute;
+right: 10px;
+bottom: 10px;
+width: 38px;
+height: 38px;
+border-radius: 11px;
+background: linear-gradient(135deg, var(–ku-red), var(–ku-gold));
+border: none;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: opacity 0.2s, transform 0.15s;
+box-shadow: 0 2px 16px rgba(240,180,41,0.3);
+}
+
+#send-btn:hover { opacity: 0.9; transform: scale(1.06); }
+#send-btn:active { transform: scale(0.94); }
+#send-btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
+
+#send-btn svg { width: 16px; height: 16px; fill: white; }
+
+.footer-row {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+margin-top: 8px;
+}
+
+.footer-note { font-size: 11px; color: var(–muted); }
+.footer-flag { font-size: 14px; }
+
+/* Clear button */
+.clear-btn {
+position: absolute;
+top: 50%;
+left: 10px;
+transform: translateY(-50%);
+background: none;
+border: none;
+color: var(–muted);
+font-size: 16px;
+cursor: pointer;
+padding: 4px;
+border-radius: 6px;
+transition: color 0.2s;
+display: none;
+}
+.clear-btn:hover { color: var(–ku-red); }
+</style>
+
+</head>
+<body>
+
+<!-- SETUP SCREEN -->
+
+<div id="setup-screen">
+  <div class="setup-card">
+    <div class="setup-langs">
+      <span class="lang-badge ku">🌟 Kurdî</span>
+      <span class="lang-badge de">🇩🇪 Deutsch</span>
+    </div>
+    <h2>Zîrek AI</h2>
+    <div class="setup-subtitle">
+      <span class="ku-text">زیرەک — هوشیار، زیرەک</span>
+      <span>Dein KI-Assistent auf Kurdisch & Deutsch</span>
+      <span style="font-size:12px; margin-top:4px;">API-Key eingeben auf <a href="https://console.anthropic.com" target="_blank" style="color:var(--ku-gold); text-decoration:none;">console.anthropic.com</a></span>
+    </div>
+    <label class="field-label">Anthropic API Key</label>
+    <input class="api-input" type="password" id="api-key-input" placeholder="sk-ant-api03-..." />
+    <button class="btn-start" onclick="startChat()">🌟 Destpê bike — Starten</button>
+    <div class="setup-error" id="setup-error"></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+
+<header>
+  <div class="header-flag-stripe">
+    <div class="stripe-red"></div>
+    <div class="stripe-yellow"></div>
+    <div class="stripe-green"></div>
+  </div>
+  <div class="header-inner">
+    <div class="logo-sun">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="18" fill="#f0b429"/>
+        <g stroke="#f0b429" stroke-width="3.5" stroke-linecap="round">
+          <line x1="50" y1="10" x2="50" y2="22"/>
+          <line x1="50" y1="78" x2="50" y2="90"/>
+          <line x1="10" y1="50" x2="22" y2="50"/>
+          <line x1="78" y1="50" x2="90" y2="50"/>
+          <line x1="21.7" y1="21.7" x2="30.2" y2="30.2"/>
+          <line x1="69.8" y1="69.8" x2="78.3" y2="78.3"/>
+          <line x1="78.3" y1="21.7" x2="69.8" y2="30.2"/>
+          <line x1="30.2" y1="69.8" x2="21.7" y2="78.3"/>
+          <line x1="35.4" y1="14.6" x2="38.8" y2="26.1"/>
+          <line x1="61.2" y1="73.9" x2="64.6" y2="85.4"/>
+          <line x1="14.6" y1="64.6" x2="26.1" y2="61.2"/>
+          <line x1="73.9" y1="38.8" x2="85.4" y2="35.4"/>
+          <line x1="14.6" y1="35.4" x2="26.1" y2="38.8"/>
+          <line x1="73.9" y1="61.2" x2="85.4" y2="64.6"/>
+          <line x1="35.4" y1="85.4" x2="38.8" y2="73.9"/>
+          <line x1="61.2" y1="26.1" x2="64.6" y2="14.6"/>
+        </g>
+      </svg>
+    </div>
+    <div class="header-titles">
+      <h1>Zîrek AI</h1>
+      <div class="sub">Kurdî · Deutsch · Powered by Claude</div>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn active-ku" id="btn-ku" onclick="setLang('ku')">🌟 Kurdî</button>
+      <button class="lang-btn" id="btn-de" onclick="setLang('de')">🇩🇪 Deutsch</button>
+      <button class="lang-btn" id="btn-both" onclick="setLang('both')">🔀 Beyde</button>
+    </div>
+    <div class="status-pill" style="margin-left:12px;">
+      <div class="status-dot"></div>
+      <span>Online</span>
+    </div>
+  </div>
+</header>
+
+<!-- CHAT -->
+
+<div id="chat-wrap">
+  <div id="messages">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-sun">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="18" fill="#f0b429"/>
+          <g stroke="#f0b429" stroke-width="3.5" stroke-linecap="round">
+            <line x1="50" y1="10" x2="50" y2="22"/><line x1="50" y1="78" x2="50" y2="90"/>
+            <line x1="10" y1="50" x2="22" y2="50"/><line x1="78" y1="50" x2="90" y2="50"/>
+            <line x1="21.7" y1="21.7" x2="30.2" y2="30.2"/><line x1="69.8" y1="69.8" x2="78.3" y2="78.3"/>
+            <line x1="78.3" y1="21.7" x2="69.8" y2="30.2"/><line x1="30.2" y1="69.8" x2="21.7" y2="78.3"/>
+            <line x1="35.4" y1="14.6" x2="38.8" y2="26.1"/><line x1="61.2" y1="73.9" x2="64.6" y2="85.4"/>
+            <line x1="14.6" y1="64.6" x2="26.1" y2="61.2"/><line x1="73.9" y1="38.8" x2="85.4" y2="35.4"/>
+            <line x1="14.6" y1="35.4" x2="26.1" y2="38.8"/><line x1="73.9" y1="61.2" x2="85.4" y2="64.6"/>
+            <line x1="35.4" y1="85.4" x2="38.8" y2="73.9"/><line x1="61.2" y1="26.1" x2="64.6" y2="14.6"/>
+          </g>
+        </svg>
+      </div>
+      <h2 id="empty-title">Zîrek AI</h2>
+      <div class="empty-ku" id="empty-ku">چۆنی؟ چ یارمەتییەکت پێویستە؟</div>
+      <p id="empty-p">Schreib auf Kurdisch oder Deutsch — ich antworte in deiner Sprache!</p>
+      <div class="suggestions" id="suggestions-wrap">
+        <button class="suggestion-btn" onclick="useSuggestion('Kurd in Deutschland: Wie war die Geschichte?')">🇩🇪 Kurden in DE</button>
+        <button class="suggestion-btn" onclick="useSuggestion('Kürtçe öğrenmek istiyorum, nasıl başlarım?')">📚 Kurdisch lernen</button>
+        <button class="suggestion-btn" onclick="useSuggestion('Kurdistan hakkında bilgi ver')">🌍 Kurdistan</button>
+        <button class="suggestion-btn" onclick="useSuggestion('Almancada en sık kullanılan 10 kelime nedir?')">💬 Deutsche Wörter</button>
+        <button class="suggestion-btn" onclick="useSuggestion('Schreib ein Gedicht über die Berge Kurdistans')">🏔️ Gedicht / Helbest</button>
+        <button class="suggestion-btn" onclick="useSuggestion('Erkläre mir die kurdische Neujahrsfeier Newroz')">🎆 Newroz</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INPUT -->
+
+<div id="input-area">
+  <div class="input-wrap">
+    <textarea id="user-input" rows="1" placeholder="Kurdî an Almancî binivîse… / Kurdisch oder Deutsch schreiben…"></textarea>
+    <button id="send-btn" onclick="sendMessage()" title="Şandin / Senden">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="footer-row">
+    <span class="footer-flag">🌟</span>
+    <span class="footer-note" id="footer-note">Zîrek AI • Kurdî & Deutsch • Powered by Claude</span>
+    <span class="footer-flag">🇩🇪</span>
+  </div>
+</div>
+
+<script>
+let apiKey = '';
+let conversationHistory = [];
+let isLoading = false;
+let currentLang = 'ku';
+
+const textarea = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+const messagesEl = document.getElementById('messages');
+const chatWrap = document.getElementById('chat-wrap');
+const emptyState = document.getElementById('empty-state');
+
+// Language configs
+const langConfig = {
+  ku: {
+    system: `Tu Zîrek AI yî — asîstanekî AI yê jêhatî û dostane yê bi Kurdî (Kurmancî) û Almanî (Deutsch) diaxive.
+    
+    RÊBAZ:
+    - Heke bikarhêner bi Kurdî binivîse, bi KURDÎ (Kurmancî) bersiv bide
+    - Heke bikarhêner bi Almanî binivîse, bi ALMANÎ bersiv bide
+    - Her dem bi xweşî û dost bersiv bide
+    - Bersivên kurt û zelal bide
+    - Di warê çanda Kurdî û Almanî de zanayî baş hebe
+    - Tu dikarî di derbarê Kurdistanê, dîroka Kurdan, çanda Kurdî û jîyana Kurdan li Almanyayê de agahiyên baş bidî`,
+    placeholder: 'Kurdî an Almanî binivîse…',
+    title: 'Zîrek AI',
+    subtitle: 'چۆنی؟ چ یارمەتییەکت پێویستە؟'
+  },
+  de: {
+    system: `Du bist Zîrek AI — ein intelligenter, freundlicher KI-Assistent der fließend Kurdisch (Kurmancî) und Deutsch spricht.
+    
+    REGELN:
+    - Wenn der Nutzer Deutsch schreibt, antworte auf DEUTSCH
+    - Wenn der Nutzer Kurdisch schreibt, antworte auf KURDISCH (Kurmancî)
+    - Immer freundlich und hilfsbereit
+    - Klare, präzise Antworten
+    - Du kennst dich gut aus mit kurdischer und deutscher Kultur
+    - Du kannst über Kurdistan, kurdische Geschichte, kurdisches Leben in Deutschland informieren`,
+    placeholder: 'Deutsch oder Kurdisch schreiben…',
+    title: 'Zîrek AI',
+    subtitle: 'Wie kann ich dir helfen?'
+  },
+  both: {
+    system: `Du bist Zîrek AI — ein zweisprachiger KI-Assistent der BEIDE Sprachen gleichzeitig nutzt: Kurdisch (Kurmancî) UND Deutsch.
+    
+    WICHTIG: Bei JEDER Antwort antworte IMMER in BEIDEN Sprachen:
+    1. Zuerst auf KURDISCH (Kurmancî)
+    2. Dann auf DEUTSCH
+    
+    Trenner verwenden: "---"
+    
+    Beispiel Format:
+    [Kurdische Antwort auf Kurmancî]
+    ---
+    [Deutsche Antwort]
+    
+    Du bist ein Experte für kurdische Kultur, Geschichte, die kurdische Diaspora in Deutschland und Newroz.`,
+    placeholder: 'Beyde ziman / Beide Sprachen…',
+    title: 'Zîrek AI — Beyde / Beide',
+    subtitle: 'Kurdî + Deutsch — Her du ziman'
+  }
+};
+
+textarea.addEventListener('input', () => {
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.min(textarea.scrollHeight, 140) + 'px';
+});
+
+textarea.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-ku').className = lang === 'ku' ? 'lang-btn active-ku' : 'lang-btn';
+  document.getElementById('btn-de').className = lang === 'de' ? 'lang-btn active-de' : 'lang-btn';
+  document.getElementById('btn-both').className = lang === 'both' ? 'lang-btn active-ku' : 'lang-btn';
+  const cfg = langConfig[lang];
+  textarea.placeholder = cfg.placeholder;
+  document.getElementById('empty-title').textContent = cfg.title;
+  document.getElementById('empty-ku').textContent = cfg.subtitle;
+  textarea.focus();
+}
+
+function startChat() {
+  const key = document.getElementById('api-key-input').value.trim();
+  if (!key.startsWith('sk-ant')) {
+    document.getElementById('setup-error').textContent = '⚠️ Bitte gib einen gültigen Anthropic API-Key ein (beginnt mit sk-ant).';
+    return;
+  }
+  apiKey = key;
+  document.getElementById('setup-screen').style.display = 'none';
+  textarea.focus();
+}
+
+document.getElementById('api-key-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') startChat();
+});
+
+function useSuggestion(text) {
+  textarea.value = text;
+  textarea.style.height = 'auto';
+  textarea.style.height = Math.min(textarea.scrollHeight, 140) + 'px';
+  sendMessage();
+}
+
+function addMessage(role, content) {
+  if (emptyState) emptyState.style.display = 'none';
+
+  const row = document.createElement('div');
+  row.className = `msg-row ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = `avatar ${role}`;
+
+  if (role === 'ai') {
+    avatar.innerHTML = `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="18" fill="#f0b429"/>
+      <g stroke="#f0b429" stroke-width="4" stroke-linecap="round">
+        <line x1="50" y1="10" x2="50" y2="22"/><line x1="50" y1="78" x2="50" y2="90"/>
+        <line x1="10" y1="50" x2="22" y2="50"/><line x1="78" y1="50" x2="90" y2="50"/>
+        <line x1="21.7" y1="21.7" x2="30.2" y2="30.2"/><line x1="69.8" y1="69.8" x2="78.3" y2="78.3"/>
+        <line x1="78.3" y1="21.7" x2="69.8" y2="30.2"/><line x1="30.2" y1="69.8" x2="21.7" y2="78.3"/>
+      </g>
+    </svg>`;
+  } else {
+    avatar.textContent = '👤';
+  }
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+
+  if (role === 'ai' && currentLang === 'both') {
+    const parts = content.split('---');
+    if (parts.length >= 2) {
+      const kuPart = parts[0].trim();
+      const dePart = parts.slice(1).join('---').trim();
+      bubble.innerHTML = `
+        <span class="bubble-lang-tag ku">🌟 Kurdî</span><br>
+        <div class="rtl">${formatContent(kuPart)}</div>
+        <hr style="border:none;border-top:1px solid var(--border2);margin:10px 0;">
+        <span class="bubble-lang-tag de">🇩🇪 Deutsch</span><br>
+        ${formatContent(dePart)}`;
+    } else {
+      bubble.innerHTML = formatContent(content);
+    }
+  } else {
+    bubble.innerHTML = formatContent(content);
+  }
+
+  if (role === 'ai') { row.appendChild(avatar); row.appendChild(bubble); }
+  else { row.appendChild(avatar); row.appendChild(bubble); }
+
+  messagesEl.appendChild(row);
+  scrollToBottom();
+  return bubble;
+}
+
+function addTypingIndicator() {
+  if (emptyState) emptyState.style.display = 'none';
+  const row = document.createElement('div');
+  row.className = 'msg-row ai';
+  row.id = 'typing-row';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar ai';
+  avatar.innerHTML = `<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="18" fill="#f0b429"/>
+    <g stroke="#f0b429" stroke-width="4" stroke-linecap="round">
+      <line x1="50" y1="10" x2="50" y2="22"/><line x1="50" y1="78" x2="50" y2="90"/>
+      <line x1="10" y1="50" x2="22" y2="50"/><line x1="78" y1="50" x2="90" y2="50"/>
+      <line x1="21.7" y1="21.7" x2="30.2" y2="30.2"/><line x1="69.8" y1="69.8" x2="78.3" y2="78.3"/>
+      <line x1="78.3" y1="21.7" x2="69.8" y2="30.2"/><line x1="30.2" y1="69.8" x2="21.7" y2="78.3"/>
+    </g>
+  </svg>`;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  messagesEl.appendChild(row);
+  scrollToBottom();
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typing-row');
+  if (el) el.remove();
+}
+
+function formatContent(text) {
+  text = text.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) =>
+    `<pre><code>${escapeHtml(code.trim())}</code></pre>`);
+
+text = text.replace(/`([^`]+)`/g, ‘<code>$1</code>’);
+text = text.replace(/**([^*]+)**/g, ‘<strong>$1</strong>’);
+text = text.replace(/*([^*]+)*/g, ‘<em>$1</em>’);
+text = text.replace(/\n/g, ‘<br>’);
+return text;
+}
+
+function escapeHtml(text) {
+return text.replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’);
+}
+
+function scrollToBottom() {
+setTimeout(() => { chatWrap.scrollTop = chatWrap.scrollHeight; }, 50);
+}
+
+async function sendMessage() {
+const text = textarea.value.trim();
+if (!text || isLoading) return;
+
+textarea.value = ‘’;
+textarea.style.height = ‘auto’;
+isLoading = true;
+sendBtn.disabled = true;
+
+addMessage(‘user’, text);
+conversationHistory.push({ role: ‘user’, content: text });
+
+addTypingIndicator();
+
+try {
+const response = await fetch(‘https://api.anthropic.com/v1/messages’, {
+method: ‘POST’,
+headers: {
+‘Content-Type’: ‘application/json’,
+‘x-api-key’: apiKey,
+‘anthropic-version’: ‘2023-06-01’,
+‘anthropic-dangerous-direct-browser-access’: ‘true’
+},
+body: JSON.stringify({
+model: ‘claude-sonnet-4-20250514’,
+max_tokens: 1500,
+system: langConfig[currentLang].system,
+messages: conversationHistory
+})
+});
+
+```
+removeTypingIndicator();
+
+if (!response.ok) {
+  const err = await response.json();
+  throw new Error(err.error?.message || `API Error ${response.status}`);
+}
+
+const data = await response.json();
+const reply = data.content[0]?.text || 'Bersiv nehat / Keine Antwort.';
+
+conversationHistory.push({ role: 'assistant', content: reply });
+addMessage('ai', reply);
+```
+
+} catch (err) {
+removeTypingIndicator();
+addMessage(‘ai’, `⚠️ **Xeletî / Fehler:** ${err.message}`);
+}
+
+isLoading = false;
+sendBtn.disabled = false;
+textarea.focus();
+}
+</script>
+
+</body>
+</html>
