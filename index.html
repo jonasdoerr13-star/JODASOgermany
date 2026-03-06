@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JODASOGermany</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+```
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --accent: #e8ff47;
+  --accent2: #ff4747;
+  --text: #f0f0f0;
+  --muted: #555;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom Cursor */
+.cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.12s ease-out, width 0.2s, height 0.2s;
+  opacity: 0.5;
+}
+
+/* Grain Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 100;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  padding: 24px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.95) 0%, transparent 100%);
+}
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.1em;
+  color: var(--text);
+}
+.nav-logo span { color: var(--accent); }
+.nav-links { display: flex; gap: 36px; }
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg-line {
+  position: absolute;
+  top: 0; right: 120px;
+  width: 1px;
+  height: 100%;
+  background: var(--border);
+}
+.hero-bg-line2 {
+  position: absolute;
+  top: 0; right: 360px;
+  width: 1px;
+  height: 100%;
+  background: var(--border);
+  opacity: 0.4;
+}
+.hero-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5rem, 14vw, 13rem);
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  opacity: 0;
+  animation: fadeUp 0.8s 0.35s forwards;
+}
+.hero-title .outline {
+  -webkit-text-stroke: 1px var(--text);
+  color: transparent;
+}
+.hero-title .accent { color: var(--accent); }
+.hero-sub {
+  margin-top: 32px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  max-width: 340px;
+  line-height: 1.7;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.5s forwards;
+}
+.hero-cta {
+  margin-top: 44px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.65s forwards;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: #0a0a0a;
+  padding: 14px 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.btn-primary:hover { background: #fff; transform: translateY(-2px); }
+.btn-secondary {
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 2px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.btn-secondary:hover { color: var(--text); border-color: var(--text); }
+
+/* Stats row */
+.hero-stats {
+  position: absolute;
+  bottom: 48px;
+  left: 48px;
+  display: flex;
+  gap: 48px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+}
+.stat-item { display: flex; flex-direction: column; gap: 4px; }
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--text);
+  letter-spacing: 0.05em;
+}
+.stat-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Scrolling ticker */
+.ticker-wrap {
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 0;
+  background: var(--surface);
+}
+.ticker {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker 22s linear infinite;
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  padding: 0 32px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+.ticker-item .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; }
+
+/* SECTION SHARED */
+section { padding: 100px 48px; }
+.section-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin-bottom: 56px;
+}
+
+/* VIDEOS */
+#videos { background: var(--bg); }
+.videos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2px;
+}
+.video-card {
+  position: relative;
+  background: var(--surface);
+  overflow: hidden;
+  cursor: none;
+  group: true;
+}
+.video-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.video-thumb iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+.video-thumb .thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,10,10,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+.video-card:hover .thumb-overlay { opacity: 0; }
+.play-icon {
+  width: 52px; height: 52px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play-icon svg { fill: var(--accent); margin-left: 3px; }
+.video-info {
+  padding: 18px 20px;
+  border-top: 1px solid var(--border);
+}
+.video-info h3 {
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.video-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+.video-tag {
+  background: var(--border);
+  color: var(--muted);
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ABOUT */
+#about {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.about-visual {
+  position: relative;
+}
+.about-img-frame {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.about-img-frame::before {
+  content: 'JODASO';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+  letter-spacing: 0.3em;
+  color: var(--border);
+}
+.about-accent-box {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 120px;
+  height: 120px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.about-accent-box span:first-child {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  color: #0a0a0a;
+  line-height: 1;
+}
+.about-accent-box span:last-child {
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #0a0a0a;
+  opacity: 0.7;
+}
+.about-text p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #888;
+  margin-bottom: 20px;
+}
+.about-text p strong { color: var(--text); font-weight: 500; }
+.about-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 32px;
+}
+.tag {
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: border-color 0.2s, color 0.2s;
+}
+.tag:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg);
+}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+.footer-logo span { color: var(--accent); }
+.footer-copy {
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.footer-yt a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  transition: color 0.2s, border-color 0.2s;
+}
+.footer-yt a:hover { color: var(--accent2); border-color: var(--accent2); }
+.footer-yt a svg { fill: currentColor; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  .nav-links { display: none; }
+  .hero, section { padding-left: 24px; padding-right: 24px; }
+  .hero-title { font-size: clamp(3.5rem, 18vw, 5rem); }
+  .hero-stats { left: 24px; gap: 28px; }
+  .about-grid { grid-template-columns: 1fr; }
+  footer { flex-direction: column; gap: 20px; text-align: center; }
+}
+```
+
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+
+  <nav>
+    <div class="nav-logo">JODASO<span>Germany</span></div>
+    <div class="nav-links">
+      <a href="#videos">Videos</a>
+      <a href="#about">Über mich</a>
+      <a href="https://youtube.com/@JODASOGermany" target="_blank">YouTube ↗</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+
+  <section class="hero" id="home">
+    <div class="hero-bg-line"></div>
+    <div class="hero-bg-line2"></div>
+    <div class="hero-label">YouTube · Gaming · Deutschland</div>
+    <h1 class="hero-title">
+      JODASO<br><span class="outline accent">GERMANY</span>
+    </h1>
+    <p class="hero-sub">Gaming-Content auf höchstem Niveau. Täglich neue Videos, ehrliche Meinungen und echte Unterhaltung.</p>
+    <div class="hero-cta">
+      <a href="https://youtube.com/@JODASOGermany" target="_blank" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        Kanal abonnieren
+      </a>
+      <a href="#videos" class="btn-secondary">Videos ansehen</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">100+</span>
+        <span class="stat-label">Videos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">DE</span>
+        <span class="stat-label">Sprache</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">24/7</span>
+        <span class="stat-label">Gaming</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span class="ticker-item"><span class="dot"></span>GAMING</span>
+      <span class="ticker-item"><span class="dot"></span>JODASO GERMANY</span>
+      <span class="ticker-item"><span class="dot"></span>NEUE VIDEOS</span>
+      <span class="ticker-item"><span class="dot"></span>YOUTUBE</span>
+      <span class="ticker-item"><span class="dot"></span>DEUTSCH</span>
+      <span class="ticker-item"><span class="dot"></span>SUBSCRIBE</span>
+      <span class="ticker-item"><span class="dot"></span>GAMING</span>
+      <span class="ticker-item"><span class="dot"></span>JODASO GERMANY</span>
+      <span class="ticker-item"><span class="dot"></span>NEUE VIDEOS</span>
+      <span class="ticker-item"><span class="dot"></span>YOUTUBE</span>
+      <span class="ticker-item"><span class="dot"></span>DEUTSCH</span>
+      <span class="ticker-item"><span class="dot"></span>SUBSCRIBE</span>
+    </div>
+  </div>
+
+  <!-- VIDEOS -->
+
+  <section id="videos">
+    <div class="section-label">Content</div>
+    <h2 class="section-title">Neueste Videos</h2>
+    <div class="videos-grid">
+
+```
+  <!-- Video 1 -->
+  <div class="video-card">
+    <div class="video-thumb">
+      <iframe src="https://www.youtube.com/embed?listType=user_uploads&list=JODASOGermany" allowfullscreen title="JODASOGermany Video 1" loading="lazy"></iframe>
+      <div class="thumb-overlay">
+        <div class="play-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="video-info">
+      <h3>Neueste Gaming-Videos</h3>
+      <div class="video-meta">
+        <span class="video-tag">Gaming</span>
+        <span>JODASOGermany</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder card 2 -->
+  <div class="video-card" onclick="window.open('https://youtube.com/@JODASOGermany','_blank')" style="cursor:pointer">
+    <div class="video-thumb" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="1"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.45A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.97C5.12 20 12 20 12 20s6.88 0 8.59-.45a2.78 2.78 0 0 0 1.95-1.97A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#333"/></svg>
+      <span style="font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:#333;">Alle Videos ansehen</span>
+    </div>
+    <div class="video-info">
+      <h3>Mehr auf YouTube</h3>
+      <div class="video-meta">
+        <span class="video-tag">Kanal</span>
+        <span>@JODASOGermany</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Placeholder card 3 -->
+  <div class="video-card" onclick="window.open('https://youtube.com/@JODASOGermany','_blank')" style="cursor:pointer">
+    <div class="video-thumb" style="display:flex;align-items:center;justify-content:center;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:3rem;letter-spacing:0.2em;color:#1e1e1e;">JODASO</span>
+    </div>
+    <div class="video-info">
+      <h3>Jetzt abonnieren</h3>
+      <div class="video-meta">
+        <span class="video-tag">Subscribe</span>
+        <span>Kein Video verpassen</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+```
+
+  </section>
+
+  <!-- ABOUT -->
+
+  <section id="about">
+    <div class="section-label">Über den Kanal</div>
+    <h2 class="section-title">Wer ist<br>JODASO?</h2>
+    <div class="about-grid">
+      <div class="about-visual">
+        <div class="about-img-frame"></div>
+        <div class="about-accent-box">
+          <span>DE</span>
+          <span>Gaming</span>
+        </div>
+      </div>
+      <div class="about-text">
+        <p><strong>JODASOGermany</strong> ist ein deutschsprachiger Gaming-Kanal auf YouTube, der Spieler aller Art zusammenbringt.</p>
+        <p>Egal ob Walkthroughs, Let's Plays, Reviews oder Highlights – hier findest du <strong>ehrlichen, unterhaltsamen Content</strong> ohne Filter. Direkt, authentisch, auf Deutsch.</p>
+        <p>Abonniere den Kanal und werde Teil der Community, die täglich wächst.</p>
+        <div class="about-tags">
+          <span class="tag">Let's Plays</span>
+          <span class="tag">Reviews</span>
+          <span class="tag">Walkthroughs</span>
+          <span class="tag">Highlights</span>
+          <span class="tag">Community</span>
+          <span class="tag">Deutsch</span>
+        </div>
+        <div style="margin-top:36px;">
+          <a href="https://youtube.com/@JODASOGermany" target="_blank" class="btn-primary">Zum YouTube-Kanal →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+    <div class="footer-logo">JODASO<span>Germany</span></div>
+    <div class="footer-copy">© 2026 JODASOGermany. Alle Rechte vorbehalten.</div>
+    <div class="footer-yt">
+      <a href="https://youtube.com/@JODASOGermany" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.97C18.88 4 12 4 12 4s-6.88 0-8.59.45A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.97C5.12 20 12 20 12 20s6.88 0 8.59-.45a2.78 2.78 0 0 0 1.95-1.97A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        YouTube
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // Intersection observer for fade-in sections
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.video-card, .about-visual, .about-text').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      observer.observe(el);
+    });
+  </script>
+
+</body>
+</html>
